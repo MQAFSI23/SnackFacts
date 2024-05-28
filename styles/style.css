@@ -1,0 +1,279 @@
+/* Login Scene Styles */
+.loginBackground {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.loginPane {
+    -fx-background-radius: 25;
+    -fx-background-color: white;
+}
+
+.textField:focused {
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: transparent;
+    -jfx-focus-color: linear-gradient(to bottom right, #421ae4, #f7ba57);
+    -fx-highlight-fill: #421ae4;
+    -fx-highlight-text-fill: white;
+}
+
+.toggleButton {
+    -fx-font-size: 14px;
+    -fx-text-fill: linear-gradient( to bottom right,#421ae4, #f7ba57);
+}
+
+.loginSideBar {
+    -fx-background-radius: 25;
+    -fx-background-color: linear-gradient( to right top,#421ae4, #f7ba57);
+}
+
+.loginButton {
+    -fx-background-color: linear-gradient( to right top,#421ae4, #f7ba57);
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+}
+
+.signUpButton {
+    -fx-background-color: linear-gradient( to right top,#421ae4, #f7ba57);
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+}
+
+.guestButton {
+    -fx-text-fill: linear-gradient( to bottom right,#421ae4, #f7ba57);
+    -fx-background-radius: 8px;
+}
+
+.closeButton {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.tooltip {
+    -fx-background-color: #421ae48a;
+    -fx-text-fill: rgb(255, 255, 255);
+}
+
+/* Home Scene Styles */
+.homeBackground {
+    -fx-background-color: white;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: black;
+    -fx-font-weight: normal;
+}
+
+.leftPanelButton {
+    -fx-background-color: #421ae4;
+    -fx-text-fill: white;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+}
+
+.logoutButton {
+    -fx-background-color: #7452ff;
+    -fx-text-fill: white;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+}
+
+.topBar {
+    -fx-background-color: #421ae4;
+}
+
+.title {
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.searchField:focused {
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: transparent;
+    -jfx-focus-color: linear-gradient(to bottom right, #421ae4, #f7ba57);
+    -fx-highlight-fill: #421ae4;
+    -fx-highlight-text-fill: white;
+}
+
+.productListView {
+    -fx-background-color: transparent;
+}
+
+.productListView .list-cell {
+    -fx-text-fill: black;
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
+    -fx-background-insets: 5px;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(138, 138, 138, 0.6), 5, 0, 0, 0);
+}
+
+.productListView .list-cell:pressed {
+    -fx-background-color: rgba(128, 128, 128, 0.4);
+}
+
+.productListView .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: rgb(185, 185, 185);
+    -fx-background-insets: 0, 0, -1, 0;
+}
+
+.scroll-bar:vertical .track {
+    -fx-background-color: white;
+    -fx-border-color: rgb(185, 185, 185);
+}
+
+.scroll-bar:vertical .increment-button ,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: white;
+}
+
+.backButton {
+    -fx-background-color: rgb(149, 149, 149);
+    -fx-text-fill: white;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+}
+
+.categoryButton {
+    -fx-background-color: #421ae4;
+    -fx-text-fill: white;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+}
+
+.dialogBackground {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.categoryComboBox {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: black;
+    -fx-font-weight: normal;
+    -fx-border-color: black;
+    -fx-border-radius: 8px;
+}
+
+.categoryComboBox:focused {
+    -fx-border-width: 2px;
+    -fx-border-color: linear-gradient( to right top,#421ae4, #f7ba57);
+}
+
+.categoryComboBox .list-cell {
+    -fx-text-fill: black;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-background-color: transparent;
+}
+
+/* Detail Product Scene Styles */
+.detailLabel {
+    -fx-font-family: Arial;
+    -fx-font-size: 12px;
+    -fx-text-fill: rgb(95, 95, 95);
+    -fx-font-weight: bold;
+    -fx-padding: 5px;
+    -fx-background-color: transparent;
+}
+
+.updaterLabel {
+    -fx-font-family: Arial;
+    -fx-font-size: 12px;
+    -fx-text-fill: #421ae4;
+    -fx-font-weight: bold;
+    -fx-padding: 5px;
+    -fx-background-color: transparent;
+
+}
+
+.nutriLabel {
+    -fx-font-family: Arial;
+    -fx-font-size: 14px;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-padding: 5px;
+    -fx-background-color: transparent;
+}
+
+.servingsVBox {
+    -fx-background-color: transparent;
+    -fx-border-color: #9f9f9f;
+    -fx-border-width: 1.5px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+}
+
+.yesButton {
+    -fx-background-color: #f5504e;
+    -fx-text-fill: white;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+}
+
+.removeButton {
+    -fx-background-color: #f5504e;
+    -fx-text-fill: white;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+}
+
+.editButton {
+    -fx-background-color: #01b552;
+    -fx-text-fill: white;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+}
+
+.noButton {
+    -fx-background-color: #01b552;
+    -fx-text-fill: white;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+}
+
+/* popup */
+.popupSuccessBackground {
+    -fx-background-color: #1fff1dba;
+    -fx-background-radius: 8px;
+}
+
+.popupFailBackground {
+    -fx-background-color: #ff211dba;
+    -fx-background-radius: 8px;
+}
+
+.popupLabel {
+    -fx-text-fill: white;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
