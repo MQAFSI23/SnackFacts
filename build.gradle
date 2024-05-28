@@ -1,0 +1,30 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+group 'SnackFacts'
+
+repositories {
+    mavenCentral()
+}
+
+application {
+    mainClass = 'app.Main'
+}
+
+javafx {
+    version = '22.0.1'
+    modules = ['javafx.controls', 'javafx.media', 'javafx.swing']
+}
+
+dependencies {
+    implementation 'com.google.zxing:core:3.5.3'
+    implementation 'org.controlsfx:controlsfx:11.2.1'
+    implementation 'org.openjfx:javafx-controls:23-ea+3'
+    implementation 'org.openjfx:javafx-swing:23-ea+3'
+    implementation 'org.openjfx:javafx-media:23-ea+3'
+    implementation 'com.jfoenix:jfoenix:9.0.1'
+    implementation 'org.xerial:sqlite-jdbc:3.45.3.0'
+    implementation 'org.bytedeco:javacv-platform:1.5.10'
+}
