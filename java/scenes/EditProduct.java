@@ -64,8 +64,7 @@ public class EditProduct {
         idField.setPromptText("Product ID");
         idField.setMaxWidth(500);
         idField.getStyleClass().add("searchField");
-        if (abstractUser.getUsername().equals("@dm1N")) idField.setDisable(false);
-        else idField.setDisable(true);;
+        idField.setDisable(true);
 
         JFXTextField nameField = new JFXTextField(product.getProductName());
         nameField.setPromptText("Product Name");
@@ -169,7 +168,6 @@ public class EditProduct {
         JFXButton saveButton = new JFXButton("Save");
         saveButton.getStyleClass().add("categoryButton");
         saveButton.setOnAction(e -> {
-            String idText = idField.getText().trim();
             String name = nameField.getText().trim();
             String category = categoryComboBox.getValue();
 
@@ -182,8 +180,7 @@ public class EditProduct {
             String sugarText = sugarField.getText().trim();
             String updater = new UserDao().getNicknameByUsername(abstractUser.getUsername());
 
-            boolean noChanges = idText.equals(String.valueOf(product.getProductId()).trim())
-                    && name.equals(product.getProductName().trim())
+            boolean noChanges = name.equals(product.getProductName().trim())
                     && category.equals(product.getCategory().trim())
                     && servingSizeText.equals(String.valueOf(nutritionFacts.getServingSize()).trim())
                     && caloriesText.equals(String.valueOf(nutritionFacts.getNutrientValue("calories")).trim())
@@ -211,25 +208,13 @@ public class EditProduct {
                 return;
             }
 
-            if (idText.length() != 13) {
-                errorLabel.setText("Product ID must be 13 digits long!");
-                return;
-            }
-
             if (name.length() > 35) {
                 errorLabel.setText("Product name length limit is 35 characters");
                 return;
             }
 
             try {
-                long id = Long.parseLong(idText);
                 ProductDao productDao = new ProductDao();
-
-                if (!idText.equals(String.valueOf(product.getProductId()).trim()) && productDao.getProductById(id) != null){
-                    errorLabel.setText("Product ID already exists!");
-                    return;
-                }
-
                 if (!name.equals(product.getProductName().trim()) && productDao.getProductByName(name) != null) {
                     errorLabel.setText("Product name already exists!");
                     return;
@@ -275,7 +260,7 @@ public class EditProduct {
                 delay.setOnFinished(event2 -> backToShowDetailProduct());
                 delay.play();
             } catch (NumberFormatException nfe) {
-                errorLabel.setText("Product ID, Serving Size, Calories, Fat, Carbs, Protein, Fiber, and Sugar must be numbers!");
+                errorLabel.setText("Serving Size, Calories, Fat, Carbs, Protein, Fiber, and Sugar must be numbers!");
             }
         });
 
