@@ -7,10 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
-
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -27,9 +25,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import models.AbstractUser;
 import models.NutritionFacts;
 import models.Product;
-import models.User;
 import utils.MyPopup;
 import utils.BarcodeScanner;
 import dao.NutritionFactsDao;
@@ -37,14 +35,14 @@ import dao.ProductDao;
 import dao.UserDao;
 
 public class AddProduct {
-    private User user;
+    private AbstractUser abstractUser;
     private Stage stage;
     private Scene scene;
     private BorderPane root;
 
-    public AddProduct(Stage stage, User user) {
+    public AddProduct(Stage stage, AbstractUser abstractUser) {
         this.stage = stage;
-        this.user = user;
+        this.abstractUser = abstractUser;
         init();
     }
 
@@ -86,7 +84,7 @@ public class AddProduct {
 
         JFXTextField servingSizeField = new JFXTextField();
         servingSizeField.setMaxWidth(500);
-        servingSizeField.setPromptText("Serving Size");
+        servingSizeField.setPromptText("Serving Size (g or ml)");
         servingSizeField.getStyleClass().add("searchField");
 
         JFXTextField caloriesField = new JFXTextField();
@@ -176,7 +174,7 @@ public class AddProduct {
             String proteinText = proteinField.getText().trim();
             String fiberText = fiberField.getText().trim();
             String sugarText = sugarField.getText().trim();
-            String updater = new UserDao().getNicknameByUsername(user.getUsername());
+            String updater = new UserDao().getNicknameByUsername(abstractUser.getUsername());
 
             if (idText.isEmpty() || name.isEmpty() || category == null ||
                 servingSizeText.isEmpty() || caloriesText.isEmpty() ||
@@ -186,8 +184,13 @@ public class AddProduct {
                 return;
             }
 
-            if (idText.length() != 13 || !idText.startsWith("89")) {
-                errorLabel.setText("Product ID must be 13 digits long and start with 89!");
+            if (idText.length() != 13) {
+                errorLabel.setText("Product ID must be 13 digits long!");
+                return;
+            }
+            
+            if (name.length() > 35) {
+                errorLabel.setText("Product name length limit is 35 characters");
                 return;
             }
 
@@ -206,6 +209,10 @@ public class AddProduct {
                 }
 
                 double servingSize = Double.parseDouble(servingSizeText);
+                if (servingSize < 1) {
+                    errorLabel.setText("Serving size is at least 1g or 1ml!");
+                    return;
+                }
                 double calories = Double.parseDouble(caloriesText);
                 double fat = Double.parseDouble(fatText);
                 double carbs = Double.parseDouble(carbsText);
@@ -282,14 +289,11 @@ public class AddProduct {
         root.setCenter(addProductVBox);
 
         scene = new Scene(root, 800, 600);
-        stage.setScene(scene);
         stage.setTitle("SnackFacts - Add Product");
-        stage.setResizable(false);
-        stage.show();
     }
 
     private void backToHome() {
-        HomeScene homeScene = new HomeScene(stage, user, false);
+        HomeScene homeScene = new HomeScene(stage, abstractUser, false);
         stage.setScene(homeScene.getScene());
     }
 
