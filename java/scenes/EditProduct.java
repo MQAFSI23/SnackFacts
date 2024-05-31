@@ -221,12 +221,20 @@ public class EditProduct {
                 return;
             }
 
-            if (!name.equals(product.getProductName().trim()) && new ProductDao().getProductByName(name) != null) {
-                errorLabel.setText("Product name already exists!");
-                return;
-            }
-
             try {
+                long id = Long.parseLong(idText);
+                ProductDao productDao = new ProductDao();
+
+                if (!idText.equals(String.valueOf(product.getProductId()).trim()) && productDao.getProductById(id) != null){
+                    errorLabel.setText("Product ID already exists!");
+                    return;
+                }
+
+                if (!name.equals(product.getProductName().trim()) && productDao.getProductByName(name) != null) {
+                    errorLabel.setText("Product name already exists!");
+                    return;
+                }
+
                 double servingSize = Double.parseDouble(servingSizeText);
                 if (servingSize < 1) {
                     errorLabel.setText("Serving size is at least 1g or 1ml!");
@@ -256,7 +264,6 @@ public class EditProduct {
                 Product updatedProduct = new Product(product.getProductId(), name, category, image);
                 NutritionFacts updatedNutritionFacts = new NutritionFacts(product.getProductId(), name, category, nutrients, servingSize, updateDateString, updater);
 
-                ProductDao productDao = new ProductDao();
                 NutritionFactsDao nutritionFactsDao = new NutritionFactsDao();
 
                 productDao.updateProduct(updatedProduct);
@@ -268,7 +275,7 @@ public class EditProduct {
                 delay.setOnFinished(event2 -> backToShowDetailProduct());
                 delay.play();
             } catch (NumberFormatException nfe) {
-                errorLabel.setText("Serving Size, Calories, Fat, Carbs, Protein, Fiber, and Sugar must be numbers!");
+                errorLabel.setText("Product ID, Serving Size, Calories, Fat, Carbs, Protein, Fiber, and Sugar must be numbers!");
             }
         });
 
