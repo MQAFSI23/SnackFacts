@@ -31,15 +31,14 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import dao.ProductDao;
-
+import models.AbstractUser;
 import models.Guest;
 import models.Product;
-import models.User;
 import utils.MyPopup;
 import utils.BarcodeScanner;
 
 public class HomeScene {
-    private User user;
+    private AbstractUser abstractUser;
     private Scene scene;
     private Stage stage;
     private BorderPane root;
@@ -47,9 +46,9 @@ public class HomeScene {
     private ListView<Product> productListView;
     private ObservableList<Product> productList;
 
-    public HomeScene(Stage stage, User user, boolean isGuest) {
-        if (isGuest) this.user = new Guest("Guest", "Guest");
-        else this.user = user;
+    public HomeScene(Stage stage, AbstractUser abstractUser, boolean isGuest) {
+        if (isGuest) this.abstractUser = new Guest("Guest", "Guest");
+        else this.abstractUser = abstractUser;
         this.stage = stage;
 
         init();
@@ -64,13 +63,13 @@ public class HomeScene {
         addProductButton.getStyleClass().add("leftPanelButton");
         addProductButton.setMinHeight(40);
         addProductButton.setOnAction(e -> {
-            if (!user.getIsGuest()) addProduct();
+            if (abstractUser.getUsername().equals("@dm1N")) addProduct();
             else {
-                new MyPopup().showPopup("Guest cannot add a product", stage, true);
+                new MyPopup().showPopup("Only admin can add a product", stage, true);
             }
         });
 
-        JFXButton scanButton = new JFXButton("🤳 Search by Barcode");
+        JFXButton scanButton = new JFXButton("🤳 Search by Scanner");
         scanButton.setMinHeight(40);
         scanButton.getStyleClass().add("leftPanelButton");
 
@@ -111,7 +110,10 @@ public class HomeScene {
         searchField.getStyleClass().add("searchField");
         VBox.setMargin(searchBox, new Insets(20, 0, 0, 0));
 
-        scanButton.setOnAction(e -> new BarcodeScanner().scanBarcode(searchField));
+        scanButton.setOnAction(e -> {
+            if (!abstractUser.getIsGuest()) new BarcodeScanner().scanBarcode(searchField); 
+            else new MyPopup().showPopup("Guest cannot use the scanner", stage, true);
+        } );
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.isEmpty()) {
@@ -221,10 +223,7 @@ public class HomeScene {
         root.setCenter(centerPanel);
 
         scene = new Scene(root, 800, 600);
-        stage.setScene(scene);
         stage.setTitle("SnackFacts - Home");
-        stage.setResizable(false);
-        stage.show();
     }
 
     private void loadProductsFromDatabase() {
@@ -261,11 +260,11 @@ public class HomeScene {
     }
 
     private void addProduct() {
-        stage.setScene(new AddProduct(stage, user).getScene());
+        stage.setScene(new AddProduct(stage, abstractUser).getScene());
     }
 
     private void showProductDetails(Product product) {
-        stage.setScene(new ShowDetailProduct(stage, user, product).getScene());
+        stage.setScene(new ShowDetailProduct(stage, abstractUser, product).getScene());
     }
 
     public Scene getScene() {
