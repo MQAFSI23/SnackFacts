@@ -27,25 +27,25 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import models.AbstractUser;
 import models.NutritionFacts;
 import models.Product;
-import models.User;
 import utils.MyPopup;
 import dao.NutritionFactsDao;
 import dao.ProductDao;
 import dao.UserDao;
 
 public class EditProduct {
-    private User user;
+    private AbstractUser abstractUser;
     private Stage stage;
     private Scene scene;
     private BorderPane root;
     private Product product;
     private NutritionFacts nutritionFacts;
 
-    public EditProduct(Stage stage, User user, Product product) {
+    public EditProduct(Stage stage, AbstractUser abstractUser, Product product) {
         this.stage = stage;
-        this.user = user;
+        this.abstractUser = abstractUser;
         this.product = product;
         this.nutritionFacts = new NutritionFactsDao().getNutritionFactsById(product.getProductId());
         init();
@@ -60,10 +60,19 @@ public class EditProduct {
         editProductVBox.setPadding(new Insets(10));
         editProductVBox.setSpacing(10);
 
+        JFXTextField idField = new JFXTextField(String.valueOf(product.getProductId()));
+        idField.setPromptText("Product ID");
+        idField.setMaxWidth(500);
+        idField.getStyleClass().add("searchField");
+        if (abstractUser.getUsername().equals("@dm1N")) idField.setDisable(false);
+        else idField.setDisable(true);;
+
         JFXTextField nameField = new JFXTextField(product.getProductName());
         nameField.setPromptText("Product Name");
         nameField.setMaxWidth(500);
         nameField.getStyleClass().add("searchField");
+        if (abstractUser.getUsername().equals("@dm1N")) nameField.setDisable(false);
+        else nameField.setDisable(true);
 
         ComboBox<String> categoryComboBox = new ComboBox<>();
         categoryComboBox.setPromptText("Category");
@@ -71,10 +80,12 @@ public class EditProduct {
         categoryComboBox.setItems(FXCollections.observableArrayList("Food", "Beverage"));
         categoryComboBox.setValue(product.getCategory());
         categoryComboBox.getStyleClass().add("categoryComboBox");
+        if (abstractUser.getUsername().equals("@dm1N")) categoryComboBox.setDisable(false);
+        else categoryComboBox.setDisable(true);
 
         JFXTextField servingSizeField = new JFXTextField(String.valueOf(nutritionFacts.getServingSize()));
         servingSizeField.setMaxWidth(500);
-        servingSizeField.setPromptText("Serving Size");
+        servingSizeField.setPromptText("Serving Size (g or ml)");
         servingSizeField.getStyleClass().add("searchField");
 
         JFXTextField caloriesField = new JFXTextField(String.valueOf(nutritionFacts.getNutrientValue("calories")));
@@ -126,12 +137,16 @@ public class EditProduct {
 
         HBox uploadBox = new HBox();
         uploadBox.getChildren().add(uploadVBox);
-
         HBox.setMargin(uploadVBox, new Insets(0, 0, 0, 140));
 
         final byte[][] imageBytes = new byte[1][1];
         imageBytes[0] = product.getImage();
         uploadImageButton.setOnAction(e -> {
+            if (!abstractUser.getUsername().equals("@dm1N")) {
+                errorLabel.setText("Only admin can upload image!");
+                return;
+            }
+
             File selectedFile = fileChooser.showOpenDialog(stage);
             if (selectedFile != null) {
                 try {
@@ -154,6 +169,7 @@ public class EditProduct {
         JFXButton saveButton = new JFXButton("Save");
         saveButton.getStyleClass().add("categoryButton");
         saveButton.setOnAction(e -> {
+            String idText = idField.getText().trim();
             String name = nameField.getText().trim();
             String category = categoryComboBox.getValue();
 
@@ -164,9 +180,10 @@ public class EditProduct {
             String proteinText = proteinField.getText().trim();
             String fiberText = fiberField.getText().trim();
             String sugarText = sugarField.getText().trim();
-            String updater = new UserDao().getNicknameByUsername(user.getUsername());
+            String updater = new UserDao().getNicknameByUsername(abstractUser.getUsername());
 
-            boolean noChanges = name.equals(product.getProductName().trim())
+            boolean noChanges = idText.equals(String.valueOf(product.getProductId()).trim())
+                    && name.equals(product.getProductName().trim())
                     && category.equals(product.getCategory().trim())
                     && servingSizeText.equals(String.valueOf(nutritionFacts.getServingSize()).trim())
                     && caloriesText.equals(String.valueOf(nutritionFacts.getNutrientValue("calories")).trim())
@@ -194,6 +211,16 @@ public class EditProduct {
                 return;
             }
 
+            if (idText.length() != 13) {
+                errorLabel.setText("Product ID must be 13 digits long!");
+                return;
+            }
+
+            if (name.length() > 35) {
+                errorLabel.setText("Product name length limit is 35 characters");
+                return;
+            }
+
             if (!name.equals(product.getProductName().trim()) && new ProductDao().getProductByName(name) != null) {
                 errorLabel.setText("Product name already exists!");
                 return;
@@ -201,6 +228,10 @@ public class EditProduct {
 
             try {
                 double servingSize = Double.parseDouble(servingSizeText);
+                if (servingSize < 1) {
+                    errorLabel.setText("Serving size is at least 1g or 1ml!");
+                    return;
+                }
                 double calories = Double.parseDouble(caloriesText);
                 double fat = Double.parseDouble(fatText);
                 double carbs = Double.parseDouble(carbsText);
@@ -252,7 +283,7 @@ public class EditProduct {
         VBox.setMargin(lowerBox, new Insets(10, 0, 0, 0));
         HBox.setMargin(saveButton, new Insets(0, 0, 0, 140));
 
-        editProductVBox.getChildren().addAll(nameField, categoryComboBox, servingSizeField, caloriesField, fatField, proteinField, carbsField, fiberField, sugarField, uploadBox, lowerBox);
+        editProductVBox.getChildren().addAll(idField, nameField, categoryComboBox, servingSizeField, caloriesField, fatField, proteinField, carbsField, fiberField, sugarField, uploadBox, lowerBox);
         editProductVBox.getStyleClass().add("editdialogBackgroundProductVBox");
         editProductVBox.setAlignment(Pos.CENTER);
 
@@ -276,14 +307,11 @@ public class EditProduct {
         root.setCenter(editProductVBox);
 
         scene = new Scene(root, 800, 600);
-        stage.setScene(scene);
         stage.setTitle("SnackFacts - Edit Product");
-        stage.setResizable(false);
-        stage.show();
     }
 
     private void backToShowDetailProduct() {
-        stage.setScene(new ShowDetailProduct(stage, user, product).getScene());
+        stage.setScene(new ShowDetailProduct(stage, abstractUser, product).getScene());
     }
 
     public Scene getScene() {
