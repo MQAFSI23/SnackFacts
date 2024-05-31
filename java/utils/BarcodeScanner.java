@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Executors;
+import java.awt.image.WritableRaster;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javafx.application.Platform;
@@ -22,11 +23,12 @@ import javafx.stage.Stage;
 
 import com.jfoenix.controls.JFXTextField;
 
-import org.bytedeco.javacv.*;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.javacv.OpenCVFrameGrabber;
+import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
-
-import java.awt.image.WritableRaster;
 
 public class BarcodeScanner {
     private final Audio beep;
@@ -58,6 +60,7 @@ public class BarcodeScanner {
         StackPane root = new StackPane(canvas);
         Scene scene = new Scene(root, 350, 350);
         scanStage.setScene(scene);
+        scanStage.setResizable(false);
         scanStage.setOnCloseRequest(event -> stopVideoStream());
         scanStage.show();
 
@@ -106,8 +109,11 @@ public class BarcodeScanner {
                 Mat mat = converter.convert(frame);
 
                 if (mat != null) {
+                    Mat matFlip = new Mat();
+                    opencv_core.flip(mat, matFlip, 1);
+
                     Mat matBGR = new Mat();
-                    opencv_imgproc.cvtColor(mat, matBGR, opencv_imgproc.COLOR_BGR2RGB);
+                    opencv_imgproc.cvtColor(matFlip, matBGR, opencv_imgproc.COLOR_BGR2RGB);
 
                     Image image = matToImage(matBGR);
                     updateImageView(image);
