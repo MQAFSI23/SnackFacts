@@ -3,9 +3,7 @@ package scenes;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-
 import dao.UserDao;
-
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Scene;
@@ -18,15 +16,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-
+import models.AbstractUser;
 import models.User;
 import utils.MyPopup;
-
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class LoginScene {
-    private User user;
+    private AbstractUser abstractUser;
     private Scene scene;
     private Stage stage;
     private AnchorPane root;
@@ -99,10 +96,16 @@ public class LoginScene {
         loginButton.getStyleClass().add("loginButton");
         loginButton.setOnAction(event -> {
             if (signInPress) {
-                if (validateInputs()) {
-                    user = new User(usernameField.getText(), passwordField.getText());
-                    if (user.authenticate()) {
-                        new MyPopup().showPopup("Successfully signed in as " + usernameField.getText(), stage, false);
+                abstractUser = new User(usernameField.getText(), passwordField.getText());
+                
+                if (abstractUser.getUsername().equals("@dm1N") && abstractUser.authenticate()) {
+                    new MyPopup().showPopup("Successfully signed in as " + new UserDao().getNicknameByUsername(abstractUser.getUsername()), stage, false);
+                    PauseTransition delay = new PauseTransition(Duration.seconds(2));
+                    delay.setOnFinished(event2 -> switchToHome());
+                    delay.play();
+                } else if (validateInputs()) {
+                    if (abstractUser.authenticate()) {
+                        new MyPopup().showPopup("Successfully signed in as " + new UserDao().getNicknameByUsername(abstractUser.getUsername()), stage, false);
                         PauseTransition delay = new PauseTransition(Duration.seconds(2));
                         delay.setOnFinished(event2 -> switchToHome());
                         delay.play();
@@ -139,10 +142,10 @@ public class LoginScene {
             if (signUpPress) {
                 nicknameField = (JFXTextField) loginPane.getChildren().get(loginPane.getChildren().indexOf(nicknameField));
                 if (validateInputs()) {
-                    user = new User(usernameField.getText(), passwordField.getText(), nicknameField.getText());
-                    if (user.isUsernameAvailable()){
-                        if (user.isNicknameAvailable()) {
-                            new UserDao().addUser(user);
+                    abstractUser = new User(usernameField.getText(), passwordField.getText(), nicknameField.getText());
+                    if (abstractUser.isUsernameAvailable()){
+                        if (abstractUser.isNicknameAvailable()) {
+                            new UserDao().addUser(abstractUser);
                             new MyPopup().showPopup("Successfully signed up as " + usernameField.getText(), stage, false);
 
                             PauseTransition delay = new PauseTransition(Duration.seconds(2));
@@ -277,12 +280,14 @@ public class LoginScene {
     private void switchToHome() {
         stage.close();
         if (isGuest) {
-            HomeScene homeScene = new HomeScene(homeStage, user, true);
+            HomeScene homeScene = new HomeScene(homeStage, abstractUser, true);
             homeStage.setScene(homeScene.getScene());
+            homeStage.setResizable(false);
             homeStage.show();
         } else {
-            HomeScene homeScene = new HomeScene(homeStage, user, false);
+            HomeScene homeScene = new HomeScene(homeStage, abstractUser, false);
             homeStage.setScene(homeScene.getScene());
+            homeStage.setResizable(false);
             homeStage.show();
         }
     }
