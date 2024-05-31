@@ -2,11 +2,8 @@ package scenes;
 
 import java.text.DecimalFormat;
 import java.util.Objects;
-
 import com.jfoenix.controls.JFXButton;
-
 import java.io.ByteArrayInputStream;
-
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,21 +21,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import dao.NutritionFactsDao;
 import dao.ProductDao;
-import models.User;
 import utils.MyPopup;
 import models.Product;
+import models.AbstractUser;
 import models.NutritionFacts;
 
 public class ShowDetailProduct {
     private BorderPane root;
-    private User user;
+    private AbstractUser abstractUser;
     private Stage stage;
     private Scene scene;
     private Product product;
 
-    public ShowDetailProduct(Stage stage, User user, Product product) {
+    public ShowDetailProduct(Stage stage, AbstractUser abstractUser, Product product) {
         this.stage = stage;
-        this.user = user;
+        this.abstractUser = abstractUser;
         this.product = product;
         init();
     }
@@ -75,7 +72,6 @@ public class ShowDetailProduct {
         Image image = new Image(new ByteArrayInputStream(product.getImage()));
         ImageView productImageView = new ImageView();
         productImageView.setImage(image);
-        productImageView.setPreserveRatio(true);
         productImageView.setFitWidth(120);
         productImageView.setFitHeight(120);
     
@@ -159,7 +155,7 @@ public class ShowDetailProduct {
         editButton.setMinHeight(40);
         editButton.getStyleClass().add("editButton");
         editButton.setOnAction(e -> {
-            if (!user.getIsGuest()) editProduct();
+            if (!abstractUser.getIsGuest()) editProduct();
             else {
                 new MyPopup().showPopup("Guest cannot edit a product", stage, true);
             }
@@ -169,9 +165,9 @@ public class ShowDetailProduct {
         removeButton.setMinHeight(40);
         removeButton.getStyleClass().add("removeButton");
         removeButton.setOnAction(e -> {
-            if (!user.getIsGuest()) removeProduct();
+            if (abstractUser.getUsername().equals("@dm1N")) removeProduct();
             else {
-                new MyPopup().showPopup("Guest cannot remove a product", stage, true);
+                new MyPopup().showPopup("Only admin can remove a product", stage, true);
             }
         });
 
@@ -189,8 +185,8 @@ public class ShowDetailProduct {
         upperBox.getChildren().addAll(productImageView, labelBox);
         upperBox.setAlignment(Pos.CENTER);
 
-        HBox.setMargin(productImageView, new Insets(0, 0, 0, 100));
-        HBox.setHgrow(productImageView, Priority.ALWAYS);
+        HBox.setMargin(productImageView, new Insets(0, 0, 0, 250));
+        HBox.setHgrow(labelBox, Priority.ALWAYS);
     
         HBox detailBox = new HBox();
         detailBox.setSpacing(20);
@@ -227,19 +223,16 @@ public class ShowDetailProduct {
         root.setCenter(detailVBox);
 
         scene = new Scene(root, 800, 600);
-        stage.setScene(scene);
         stage.setTitle("SnackFacts - Product Details");
-        stage.setResizable(false);
-        stage.show();
     }
 
     private void backToHome() {
-        HomeScene home = new HomeScene(stage, user, false);
+        HomeScene home = new HomeScene(stage, abstractUser, abstractUser.getIsGuest());
         stage.setScene(home.getScene());
     }
 
     private void editProduct() {
-        EditProduct editProduct = new EditProduct(stage, user, product);
+        EditProduct editProduct = new EditProduct(stage, abstractUser, product);
         stage.setScene(editProduct.getScene());
     }
 
